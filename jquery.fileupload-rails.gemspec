@@ -4,7 +4,7 @@ require "jquery.fileupload-rails/version"
 
 Gem::Specification.new do |s|
   s.name        = "jquery.fileupload-rails"
-  s.version     = Jquery.fileupload::Rails::VERSION
+  s.version     = JqueryFileUpload::Rails::VERSION
   s.authors     = ["Semyon Perepelitsa"]
   s.email       = ["sema@sema.in"]
   s.homepage    = "https://github.com/semaperepelitsa/jquery.fileupload-rails"
