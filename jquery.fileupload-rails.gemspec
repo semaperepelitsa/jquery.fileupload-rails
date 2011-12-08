@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Jquery.fileupload::Rails::VERSION
   s.authors     = ["Semyon Perepelitsa"]
   s.email       = ["sema@sema.in"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "https://github.com/semaperepelitsa/jquery.fileupload-rails"
+  s.summary     = %q{Use jQuery File Upload plugin with Rails 3}
+  s.description = %q{This gem packages jQuery File Upload plugin and it's dependencies for Rails asset pipeline.}
 
   s.rubyforge_project = "jquery.fileupload-rails"
 
