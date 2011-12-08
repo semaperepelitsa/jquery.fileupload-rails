@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "jquery.fileupload-rails/version"
 
 Gem::Specification.new do |s|
   s.name        = "jquery.fileupload-rails"
-  s.version     = Jquery.fileupload::Rails::VERSION
+  s.version     = "0.0.1"
   s.authors     = ["Semyon Perepelitsa"]
   s.email       = ["sema@sema.in"]
   s.homepage    = "https://github.com/semaperepelitsa/jquery.fileupload-rails"
