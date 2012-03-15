@@ -1,19 +1,37 @@
 /*
- * jQuery File Upload Plugin 5.5.2
+ * jQuery File Upload Plugin 5.9
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
+ * http://www.opensource.org/licenses/MIT
  */
 
 /*jslint nomen: true, unparam: true, regexp: true */
-/*global document, XMLHttpRequestUpload, Blob, File, FormData, location, jQuery */
+/*global define, window, document, Blob, FormData, location */
 
-(function ($) {
+(function (factory) {
     'use strict';
+    if (typeof define === 'function' && define.amd) {
+        // Register as an anonymous AMD module:
+        define([
+            'jquery',
+            'jquery.ui.widget'
+        ], factory);
+    } else {
+        // Browser globals:
+        factory(window.jQuery);
+    }
+}(function ($) {
+    'use strict';
+
+    // The FileReader API is not actually used, but works as feature detection,
+    // as e.g. Safari supports XHR file uploads via the FormData API,
+    // but not non-multipart XHR file uploads:
+    $.support.xhrFileUpload = !!(window.XMLHttpRequestUpload && window.FileReader);
+    $.support.xhrFormDataFileUpload = !!window.FormData;
 
     // The fileupload widget listens for change events on file input fields defined
     // via fileInput setting and paste or drop events of the given dropZone.
@@ -62,6 +80,12 @@
             limitConcurrentUploads: undefined,
             // Set the following option to true to force iframe transport uploads:
             forceIframeTransport: false,
+            // Set the following option to the location of a redirect url on the
+            // origin server, for cross-domain iframe transport uploads:
+            redirect: undefined,
+            // The parameter name for the redirect url, sent as part of the form
+            // data and set to 'redirect' if this option is empty:
+            redirectParamName: undefined,
             // Set the following option to the location of a postMessage window,
             // to enable postMessage transport uploads:
             postMessage: undefined,
@@ -147,13 +171,18 @@
         },
 
         // A list of options that require a refresh after assigning a new value:
-        _refreshOptionsList: ['namespace', 'dropZone', 'fileInput'],
+        _refreshOptionsList: [
+            'namespace',
+            'dropZone',
+            'fileInput',
+            'multipart',
+            'forceIframeTransport'
+        ],
 
         _isXHRUpload: function (options) {
-            var undef = 'undefined';
             return !options.forceIframeTransport &&
-                typeof XMLHttpRequestUpload !== undef && typeof File !== undef &&
-                (!options.multipart || typeof FormData !== undef);
+                ((!options.multipart && $.support.xhrFileUpload) ||
+                $.support.xhrFormDataFileUpload);
         },
 
         _getFormData: function (options) {
@@ -210,10 +239,15 @@
                 xhr = options.xhr ? options.xhr() : $.ajaxSettings.xhr();
             // Accesss to the native XHR object is required to add event listeners
             // for the upload progress event:
-            if (xhr.upload && xhr.upload.addEventListener) {
-                xhr.upload.addEventListener('progress', function (e) {
+            if (xhr.upload) {
+                $(xhr.upload).bind('progress', function (e) {
+                    var oe = e.originalEvent;
+                    // Make sure the progress event properties get copied over:
+                    e.lengthComputable = oe.lengthComputable;
+                    e.loaded = oe.loaded;
+                    e.total = oe.total;
                     that._onProgress(e, options);
-                }, false);
+                });
                 options.xhr = function () {
                     return xhr;
                 };
@@ -222,8 +256,10 @@
 
         _initXHRData: function (options) {
             var formData,
-                file = options.files[0];
-            if (!options.multipart || options.blob) {
+                file = options.files[0],
+                // Ignore non-multipart setting if not supported:
+                multipart = options.multipart || !$.support.xhrFileUpload;
+            if (!multipart || options.blob) {
                 // For non-multipart uploads and chunked uploads,
                 // file meta data is not part of the request body,
                 // so we transmit this data as part of the HTTP headers.
@@ -239,13 +275,13 @@
                     // Non-chunked non-multipart upload:
                     options.contentType = file.type;
                     options.data = file;
-                } else if (!options.multipart) {
+                } else if (!multipart) {
                     // Chunked non-multipart upload:
                     options.contentType = 'application/octet-stream';
                     options.data = options.blob;
                 }
             }
-            if (options.multipart && typeof FormData !== 'undefined') {
+            if (multipart && $.support.xhrFormDataFileUpload) {
                 if (options.postMessage) {
                     // window.postMessage does not allow sending FormData
                     // objects, so we just add the File/Blob objects to
@@ -275,14 +311,14 @@
                         });
                     }
                     if (options.blob) {
-                        formData.append(options.paramName, options.blob);
+                        formData.append(options.paramName, options.blob, file.name);
                     } else {
                         $.each(options.files, function (index, file) {
                             // File objects are also Blob instances.
                             // This check allows the tests to run with
                             // dummy objects:
                             if (file instanceof Blob) {
-                                formData.append(options.paramName, file);
+                                formData.append(options.paramName, file, file.name);
                             }
                         });
                     }
@@ -298,6 +334,14 @@
             options.dataType = 'iframe ' + (options.dataType || '');
             // The iframe transport accepts a serialized array as form data:
             options.formData = this._getFormData(options);
+            // Add redirect url to form data on cross-domain uploads:
+            if (options.redirect && $('<a></a>').prop('href', options.url)
+                    .prop('host') !== location.host) {
+                options.formData.push({
+                    name: options.redirectParamName || 'redirect',
+                    value: options.redirect
+                });
+            }
         },
 
         _initDataSettings: function (options) {
@@ -716,17 +760,19 @@
         },
 
         _initEventHandlers: function () {
-            var ns = this.options.namespace || this.widgetName;
-            this.options.dropZone
-                .bind('dragover.' + ns, {fileupload: this}, this._onDragOver)
-                .bind('drop.' + ns, {fileupload: this}, this._onDrop)
-                .bind('paste.' + ns, {fileupload: this}, this._onPaste);
+            var ns = this.options.namespace;
+            if (this._isXHRUpload(this.options)) {
+                this.options.dropZone
+                    .bind('dragover.' + ns, {fileupload: this}, this._onDragOver)
+                    .bind('drop.' + ns, {fileupload: this}, this._onDrop)
+                    .bind('paste.' + ns, {fileupload: this}, this._onPaste);
+            }
             this.options.fileInput
                 .bind('change.' + ns, {fileupload: this}, this._onChange);
         },
 
         _destroyEventHandlers: function () {
-            var ns = this.options.namespace || this.widgetName;
+            var ns = this.options.namespace;
             this.options.dropZone
                 .unbind('dragover.' + ns, this._onDragOver)
                 .unbind('drop.' + ns, this._onDrop)
@@ -735,43 +781,38 @@
                 .unbind('change.' + ns, this._onChange);
         },
 
-        _beforeSetOption: function (key, value) {
-            this._destroyEventHandlers();
-        },
-
-        _afterSetOption: function (key, value) {
-            var options = this.options;
-            if (!options.fileInput) {
-                options.fileInput = $();
-            }
-            if (!options.dropZone) {
-                options.dropZone = $();
-            }
-            this._initEventHandlers();
-        },
-
         _setOption: function (key, value) {
             var refresh = $.inArray(key, this._refreshOptionsList) !== -1;
             if (refresh) {
-                this._beforeSetOption(key, value);
+                this._destroyEventHandlers();
             }
             $.Widget.prototype._setOption.call(this, key, value);
             if (refresh) {
-                this._afterSetOption(key, value);
+                this._initSpecialOptions();
+                this._initEventHandlers();
             }
         },
 
-        _create: function () {
+        _initSpecialOptions: function () {
             var options = this.options;
             if (options.fileInput === undefined) {
                 options.fileInput = this.element.is('input:file') ?
                         this.element : this.element.find('input:file');
-            } else if (!options.fileInput) {
-                options.fileInput = $();
+            } else if (!(options.fileInput instanceof $)) {
+                options.fileInput = $(options.fileInput);
             }
-            if (!options.dropZone) {
-                options.dropZone = $();
+            if (!(options.dropZone instanceof $)) {
+                options.dropZone = $(options.dropZone);
             }
+        },
+
+        _create: function () {
+            var options = this.options,
+                dataOpts = $.extend({}, this.element.data());
+            dataOpts[this.widgetName] = undefined;
+            $.extend(options, dataOpts);
+            options.namespace = options.namespace || this.widgetName;
+            this._initSpecialOptions();
             this._slots = [];
             this._sequence = this._getXHRPromise(true);
             this._sending = this._active = this._loaded = this._total = 0;
@@ -822,4 +863,4 @@
 
     });
 
-}(jQuery));
+}));

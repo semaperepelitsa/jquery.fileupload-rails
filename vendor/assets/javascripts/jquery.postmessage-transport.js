@@ -1,18 +1,27 @@
 /*
- * jQuery postMessage Transport Plugin 1.0
+ * jQuery postMessage Transport Plugin 1.1
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2011, Sebastian Tschan
  * https://blueimp.net
  *
  * Licensed under the MIT license:
- * http://creativecommons.org/licenses/MIT/
+ * http://www.opensource.org/licenses/MIT
  */
 
 /*jslint unparam: true, nomen: true */
-/*global jQuery, window, document */
+/*global define, window, document */
 
-(function ($) {
+(function (factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        // Register as an anonymous AMD module:
+        define(['jquery'], factory);
+    } else {
+        // Browser globals:
+        factory(window.jQuery);
+    }
+}(function ($) {
     'use strict';
 
     var counter = 0,
@@ -105,4 +114,4 @@
         }
     });
 
-}(jQuery));
+}));
