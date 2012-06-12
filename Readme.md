@@ -9,9 +9,11 @@ This is a simple gem package for this plugin.
 
 ## Changelog
 
-0.1.0. jquery.fileupload 5.9.0 and jquery.fileupload-ui 6.6.2, added readme.
+0.1.1. Core 5.11.2, UI 6.9.1, minor gemspec change.
 
-0.0.1. jquery.fileupload 5.5.2 and jquery.fileupload-ui 5.1.1.
+0.1.0. Core 5.9.0,  UI 6.6.2, added readme.
+
+0.0.1. Core 5.5.2,  UI 5.1.1.
 
 ## Todo
 
