@@ -9,6 +9,8 @@ This is a simple gem package for this plugin.
 
 ## Changelog
 
+0.1.2. Fixed CSS that makes SASS 3.2 raise an error on rake assets:precompile
+
 0.1.1. Core 5.11.2, UI 6.9.1, minor gemspec change.
 
 0.1.0. Core 5.9.0,  UI 6.6.2, added readme.
