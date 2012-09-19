@@ -9,6 +9,12 @@ This is a simple gem package for this plugin.
 
 ## Changelog
 
+1.0.0.alpha. Core 5.17.2, added jquery-ui-rails dependency.
+
+Now rake task generates assets from official repo and adds dependencies automatically.
+That means you can just require jquery.fileupload, no extra requires needed.
+UI stuff is removed temporarily.
+
 0.1.2. Fixed CSS that makes SASS 3.2 raise an error on rake assets:precompile
 
 0.1.1. Core 5.11.2, UI 6.9.1, minor gemspec change.
@@ -19,8 +25,8 @@ This is a simple gem package for this plugin.
 
 ## Todo
 
-* Add convinient file-package with jquery.fileupload and all it's dependencies.
+* Import UI js/css/images in rake task too. Need to fix relative paths to images. See [jquery-ui-rails][2].
 * Add example usage in Rails here.
-* Add script to automate updating the library from [the official repo][1].
 
 [1]: https://github.com/blueimp/jQuery-File-Upload
+[2]: https://github.com/joliss/jquery-ui-rails
