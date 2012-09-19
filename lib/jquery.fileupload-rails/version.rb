@@ -1,5 +1,5 @@
 module JqueryFileUpload
   module Rails
-    VERSION = "0.1.2"
+    VERSION = "1.0.0.alpha"
   end
 end
