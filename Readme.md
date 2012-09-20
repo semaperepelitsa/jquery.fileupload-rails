@@ -1,11 +1,26 @@
 # jQuery File Upload for Rails
 
-jQuery File Upload is a very well designed cross-browser solution for modern file uploading with pure JavaScript.
-The plugin is developed by Sebastian Tschan (@blueimp) and well maintained.
+[jQuery File Upload][1] is a cross-browser javascript library for asynchronus Flash-free file uploading
+by Sebastian Tschan (@blueimp). This gem packages it for the asset pipeline in Rails.
 
-This is a simple gem package for this plugin.
+See the original project page for reference & documentation.
 
-[See the original project page][1] for reference & documentation.
+## Usage
+
+Add the following to your Gemfile.
+
+    group :assets do
+      gem 'jquery.fileupload-rails'
+    end
+
+Then you can require the javascript library in application.js:
+
+    //= require jquery.fileupload
+
+Included (no need to require):
+
+* jQuery Iframe Transport for IE support.
+* jQuery UI widget from [jquery-ui-rails][2]
 
 ## Changelog
 
