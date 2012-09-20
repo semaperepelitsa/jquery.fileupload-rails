@@ -3,7 +3,8 @@
 [jQuery File Upload][1] is a cross-browser javascript library for asynchronus Flash-free file uploading
 by Sebastian Tschan (@blueimp). This gem packages it for the asset pipeline in Rails.
 
-See the original project page for reference & documentation.
+You should see the original project page for reference & documentation.
+There are no instructions here on how to use the library itself.
 
 ## Usage
 
