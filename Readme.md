@@ -38,10 +38,5 @@ UI stuff is removed temporarily.
 
 0.0.1. Core 5.5.2,  UI 5.1.1.
 
-## Todo
-
-* Import UI js/css/images in rake task too. Need to fix relative paths to images. See [jquery-ui-rails][2].
-* Add example usage in Rails here.
-
 [1]: https://github.com/blueimp/jQuery-File-Upload
 [2]: https://github.com/joliss/jquery-ui-rails
