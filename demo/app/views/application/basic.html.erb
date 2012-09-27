@@ -1,0 +1,4 @@
+<%= form_tag "/", method: "post", id: "basic" do %>
+  <%# Opera uploads all files in one request, others do a request per file %>
+  <div><%= file_field_tag "files[]", multiple: true %></div>
+<% end %>
