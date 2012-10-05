@@ -2,7 +2,7 @@
 //= require jquery.iframe-transport
 
 /*
- * jQuery File Upload Plugin 5.17.2
+ * jQuery File Upload Plugin 5.17.6
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -506,9 +506,7 @@
                 fs = file.size,
                 ub = options.uploadedBytes = options.uploadedBytes || 0,
                 mcs = options.maxChunkSize || fs,
-                // Use the Blob methods with the slice implementation
-                // according to the W3C Blob API specification:
-                slice = file.webkitSlice || file.mozSlice || file.slice,
+                slice = file.slice || file.webkitSlice || file.mozSlice,
                 upload,
                 n,
                 jqXHR,
@@ -521,7 +519,7 @@
                 return true;
             }
             if (ub >= fs) {
-                file.error = 'uploadedBytes';
+                file.error = 'Uploaded bytes exceed file size';
                 return this._getXHRPromise(
                     false,
                     options.context,
@@ -809,10 +807,16 @@
                 dirReader;
             path = path || '';
             if (entry.isFile) {
-                entry.file(function (file) {
-                    file.relativePath = path;
-                    dfd.resolve(file);
-                }, errorHandler);
+                if (entry._file) {
+                    // Workaround for Chrome bug #149735
+                    entry._file.relativePath = path;
+                    dfd.resolve(entry._file);
+                } else {
+                    entry.file(function (file) {
+                        file.relativePath = path;
+                        dfd.resolve(file);
+                    }, errorHandler);
+                }
             } else if (entry.isDirectory) {
                 dirReader = entry.createReader();
                 dirReader.readEntries(function (entries) {
@@ -853,8 +857,12 @@
                     items[0].getAsEntry)) {
                 return this._handleFileTreeEntries(
                     $.map(items, function (item) {
+                        var entry;
                         if (item.webkitGetAsEntry) {
-                            return item.webkitGetAsEntry();
+                            entry = item.webkitGetAsEntry();
+                            // Workaround for Chrome bug #149735:
+                            entry._file = item.getAsFile();
+                            return entry;
                         }
                         return item.getAsEntry();
                     })
