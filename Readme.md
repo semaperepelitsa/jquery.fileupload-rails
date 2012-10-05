@@ -25,11 +25,10 @@ Included (no need to require):
 
 ## Changelog
 
-1.0.0.alpha. Core 5.17.2, added jquery-ui-rails dependency.
+1.0.0.beta. Core 5.17.6.
 
 Now rake task generates assets from official repo and adds dependencies automatically.
 That means you can just require jquery.fileupload, no extra requires needed.
-UI stuff is removed temporarily.
 
 0.1.2. Fixed CSS that makes SASS 3.2 raise an error on rake assets:precompile
 
