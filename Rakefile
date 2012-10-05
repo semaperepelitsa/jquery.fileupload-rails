@@ -10,7 +10,7 @@ end
 
 desc "Remove the vendor directory"
 task :clean do
-  rm_rf 'vendor'
+  rm_rf 'vendor/assets'
 end
 
 desc "Generate the JavaScript assets"
