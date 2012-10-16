@@ -1,4 +1,3 @@
-require "jquery.fileupload-rails/version"
 require "jquery-ui-rails"
 
 module JqueryFileUpload
