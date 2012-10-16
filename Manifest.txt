@@ -56,7 +56,6 @@ dependencies.json
 jQuery-File-Upload
 jquery.fileupload-rails.gemspec
 lib/jquery.fileupload-rails.rb
-lib/jquery.fileupload-rails/version.rb
 vendor/assets/javascripts/jquery.fileupload.js
 vendor/assets/javascripts/jquery.iframe-transport.js
 vendor/legacy_assets/javascripts/jquery.fileupload-fp.js
