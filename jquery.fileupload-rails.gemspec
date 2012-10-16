@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{Use jQuery File Upload plugin with Rails 3}
   s.description = %q{This gem packages jQuery File Upload plugin and it's dependencies for Rails asset pipeline.}
 
-  s.files         = File.read('Manifest.txt').split("\n")
+  s.files       = File.read('Manifest.txt').split("\n")
 
   s.add_dependency 'sprockets', '~> 2.0'
   s.add_dependency 'jquery-ui-rails'
