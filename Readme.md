@@ -23,6 +23,20 @@ Included (no need to require):
 * jQuery Iframe Transport for IE support.
 * jQuery UI widget from [jquery-ui-rails][2]
 
+## Upgrading 0.1 to 1.0
+
+You can remove all dependencies of the plugin from you manifest. Before:
+
+    //= require jquery.ui
+    //= require jquery.iframe-transport
+    //= require jquery.fileupload
+
+After:
+
+    //= require jquery.fileupload
+
+If you downloaded jquery.ui assets into your project, delete them and use [jquery-ui-rails][2] gem instead.
+
 ## Changelog
 
 1.0.0. Core 5.18.
