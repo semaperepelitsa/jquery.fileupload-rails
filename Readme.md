@@ -25,7 +25,7 @@ Included (no need to require):
 
 ## Changelog
 
-1.0.0.beta. Core 5.17.6.
+1.0.0. Core 5.18.
 
 Now rake task generates assets from official repo and adds dependencies automatically.
 That means you can just require jquery.fileupload, no extra requires needed.
