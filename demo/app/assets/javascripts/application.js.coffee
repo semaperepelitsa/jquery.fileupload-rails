@@ -6,4 +6,4 @@ $ ->
   $('#basic').fileupload
     done: (e, data)->
       console.log "Done", data.result
-      $(data.result).find('div').appendTo(this)
+      $(data.result).appendTo(this)
