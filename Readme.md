@@ -39,6 +39,8 @@ If you downloaded jquery.ui assets into your project, delete them and use [jquer
 
 ## Changelog
 
+1.1.0. Core 5.19.2.
+
 1.0.0. Core 5.18.
 
 Now rake task generates assets from official repo and adds dependencies automatically.
