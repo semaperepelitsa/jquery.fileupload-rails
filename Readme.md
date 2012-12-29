@@ -56,3 +56,6 @@ That means you can just require jquery.fileupload, no extra requires needed.
 
 [1]: https://github.com/blueimp/jQuery-File-Upload
 [2]: https://github.com/joliss/jquery-ui-rails
+
+## License
+jQuery File Upload as well as this gem are released under the [MIT license](http://www.opensource.org/licenses/MIT).

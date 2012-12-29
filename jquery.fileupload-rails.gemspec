@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/semaperepelitsa/jquery.fileupload-rails"
   s.summary     = %q{Use jQuery File Upload plugin with Rails 3}
   s.description = %q{This gem packages jQuery File Upload plugin and it's dependencies for Rails asset pipeline.}
+  s.license     = "MIT"
 
   s.files       = File.read('Manifest.txt').split("\n")
 
