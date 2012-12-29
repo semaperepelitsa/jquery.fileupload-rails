@@ -2,7 +2,7 @@
 //= require jquery.iframe-transport
 
 /*
- * jQuery File Upload Plugin 5.19.2
+ * jQuery File Upload Plugin 5.19.7
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -13,7 +13,7 @@
  */
 
 /*jslint nomen: true, unparam: true, regexp: true */
-/*global define, window, document, Blob, FormData, location */
+/*global define, window, document, File, Blob, FormData, location */
 
 (function (factory) {
     'use strict';
@@ -212,10 +212,10 @@
             if (typeof options.formData === 'function') {
                 return options.formData(options.form);
             }
-			if ($.isArray(options.formData)) {
+            if ($.isArray(options.formData)) {
                 return options.formData;
             }
-			if (options.formData) {
+            if (options.formData) {
                 formData = [];
                 $.each(options.formData, function (name, value) {
                     formData.push({name: name, value: value});
@@ -344,14 +344,15 @@
                     if (options.blob) {
                         options.headers['Content-Disposition'] = 'attachment; filename="' +
                             encodeURI(file.name) + '"';
-                        options.headers['Content-Description'] = encodeURI(file.type);
                         formData.append(paramName, options.blob, file.name);
                     } else {
                         $.each(options.files, function (index, file) {
-                            // File objects are also Blob instances.
+                            // Files are also Blob instances, but some browsers
+                            // (Firefox 3.6) support the File API but not Blobs.
                             // This check allows the tests to run with
                             // dummy objects:
-                            if (file instanceof Blob) {
+                            if ((window.Blob && file instanceof Blob) ||
+                                    (window.File && file instanceof File)) {
                                 formData.append(
                                     options.paramName[index] || paramName,
                                     file,
@@ -528,7 +529,8 @@
                 o.blob = slice.call(
                     file,
                     ub,
-                    ub + mcs
+                    ub + mcs,
+                    file.type
                 );
                 // Store the current chunk size, as the blob itself
                 // will be dereferenced after data processing:
@@ -647,18 +649,18 @@
         _onSend: function (e, data) {
             var that = this,
                 jqXHR,
+                aborted,
                 slot,
                 pipe,
                 options = that._getAJAXSettings(data),
-                send = function (resolve, args) {
+                send = function () {
                     that._sending += 1;
                     // Set timer for bitrate progress calculation:
                     options._bitrateTimer = new that._BitrateTimer();
                     jqXHR = jqXHR || (
-                        (resolve !== false &&
-                        that._trigger('send', e, options) !== false &&
-                        (that._chunkedUpload(options) || $.ajax(options))) ||
-                        that._getXHRPromise(false, options.context, args)
+                        ((aborted || that._trigger('send', e, options) === false) &&
+                        that._getXHRPromise(false, options.context, aborted)) ||
+                        that._chunkedUpload(options) || $.ajax(options)
                     ).done(function (result, textStatus, jqXHR) {
                         that._onDone(result, textStatus, jqXHR, options);
                     }).fail(function (jqXHR, textStatus, errorThrown) {
@@ -708,12 +710,12 @@
                 // which is delegated to the jqXHR object of the current upload,
                 // and jqXHR callbacks mapped to the equivalent Promise methods:
                 pipe.abort = function () {
-                    var args = [undefined, 'abort', 'abort'];
+                    aborted = [undefined, 'abort', 'abort'];
                     if (!jqXHR) {
                         if (slot) {
-                            slot.rejectWith(pipe, args);
+                            slot.rejectWith(options.context, aborted);
                         }
-                        return send(false, args);
+                        return send();
                     }
                     return jqXHR.abort();
                 };
@@ -761,7 +763,8 @@
                         that._onSend(e, this);
                     return this.jqXHR;
                 };
-                return (result = that._trigger('add', e, newData));
+                result = that._trigger('add', e, newData);
+                return result;
             });
             return result;
         },
@@ -952,10 +955,12 @@
         },
 
         _onDrop: function (e) {
-            e.preventDefault();
             var that = this,
                 dataTransfer = e.dataTransfer = e.originalEvent.dataTransfer,
                 data = {};
+            if (dataTransfer && dataTransfer.files && dataTransfer.files.length) {
+                e.preventDefault();
+            }
             this._getDroppedFiles(dataTransfer).always(function (files) {
                 data.files = files;
                 if (that._trigger('drop', e, data) !== false) {
@@ -969,10 +974,10 @@
             if (this._trigger('dragover', e) === false) {
                 return false;
             }
-            if (dataTransfer) {
+            if (dataTransfer && $.inArray('Files', dataTransfer.types) !== -1) {
                 dataTransfer.dropEffect = 'copy';
+                e.preventDefault();
             }
-            e.preventDefault();
         },
 
         _initEventHandlers: function () {
