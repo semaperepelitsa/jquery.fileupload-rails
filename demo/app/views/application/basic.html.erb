@@ -1,4 +1,12 @@
+<p>
+  You can test the most basic functionality of jQuery File Upload on this page.<br />
+  First, open the log in Web Inspector. You shouldn't see any errors there.<br />
+  Try to upload one file, multiple files. You will see a Ruby array of uploaded files below.<br />
+</p>
+<p>
+  All browsers except Opera upload only one file per request.<br />
+  That means you will probably see an array of one element for each uploaded file.<br />
+</p>
 <%= form_tag "/", method: "post", id: "basic" do %>
-  <%# Opera uploads all files in one request, others do a request per file %>
   <div><%= file_field_tag "files[]", multiple: true %></div>
 <% end %>

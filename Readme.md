@@ -23,6 +23,8 @@ Included (no need to require):
 * jQuery Iframe Transport for IE support.
 * jQuery UI widget from [jquery-ui-rails][2]
 
+Example Rails application can be found in "demo" directory.
+
 ## Upgrading 0.1 to 1.0
 
 You can remove all dependencies of the plugin from you manifest. Before:
@@ -39,7 +41,7 @@ If you downloaded jquery.ui assets into your project, delete them and use [jquer
 
 ## Changelog
 
-1.2.0. Core 5.21.1.
+1.2.0. Core 5.21.1, demo instructions.
 
 1.1.1. Core 5.19.4, jQuery UI 1.9, added licensing info.
 
