@@ -12,6 +12,6 @@ Gem::Specification.new do |s|
 
   s.files       = File.read('Manifest.txt').split("\n")
 
-  s.add_dependency 'sprockets', '~> 2.0'
+  s.add_dependency 'railties', '>= 3.1'
   s.add_dependency 'jquery-ui-rails', '~> 3.0'
 end
