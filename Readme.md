@@ -41,6 +41,8 @@ If you downloaded jquery.ui assets into your project, delete them and use [jquer
 
 ## Changelog
 
+1.3.0. Core 5.26.
+
 1.2.0. Core 5.21.1, demo instructions.
 
 1.1.1. Core 5.19.4, jQuery UI 1.9, added licensing info.
