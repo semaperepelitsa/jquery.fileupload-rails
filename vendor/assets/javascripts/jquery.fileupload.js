@@ -2,7 +2,7 @@
 //= require jquery.iframe-transport
 
 /*
- * jQuery File Upload Plugin 5.30
+ * jQuery File Upload Plugin 5.31
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -226,8 +226,9 @@
             cache: false
         },
 
-        // A list of options that require a refresh after assigning a new value:
-        _refreshOptionsList: [
+        // A list of options that require reinitializing event listeners and/or
+        // special initialization code:
+        _specialOptions: [
             'fileInput',
             'dropZone',
             'pasteZone',
@@ -1153,12 +1154,12 @@
         },
 
         _setOption: function (key, value) {
-            var refresh = $.inArray(key, this._refreshOptionsList) !== -1;
-            if (refresh) {
+            var reinit = $.inArray(key, this._specialOptions) !== -1;
+            if (reinit) {
                 this._destroyEventHandlers();
             }
             this._super(key, value);
-            if (refresh) {
+            if (reinit) {
                 this._initSpecialOptions();
                 this._initEventHandlers();
             }
@@ -1187,6 +1188,11 @@
             return new RegExp(parts.join('/'), modifiers);
         },
 
+        _isRegExpOption: function (key, value) {
+            return key !== 'url' && $.type(value) === 'string' &&
+                /^\/.*\/[igm]{0,3}$/.test(value);
+        },
+
         _initDataAttributes: function () {
             var that = this,
                 options = this.options;
@@ -1194,9 +1200,7 @@
             $.each(
                 $(this.element[0].cloneNode(false)).data(),
                 function (key, value) {
-                    // Initialize RegExp options:
-                    if ($.type(value) === 'string' &&
-                            value.charAt(0) === '/') {
+                    if (that._isRegExpOption(key, value)) {
                         value = that._getRegExp(value);
                     }
                     options[key] = value;
