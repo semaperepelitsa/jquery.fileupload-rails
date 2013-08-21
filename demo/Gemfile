@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.8'
+gem 'rails', '3.2.14'
 
 gem 'coffee-rails', '~> 3.2.1'
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 2.2.0'
 gem 'jquery.fileupload-rails', path: '..'
