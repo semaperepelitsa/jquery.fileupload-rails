@@ -2,7 +2,7 @@
 //= require jquery.iframe-transport
 
 /*
- * jQuery File Upload Plugin 5.32.2
+ * jQuery File Upload Plugin 5.32.5
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -402,7 +402,7 @@
                 // Ignore non-multipart setting if not supported:
                 multipart = options.multipart || !$.support.xhrFileUpload,
                 paramName = options.paramName[0];
-            options.headers = options.headers || {};
+            options.headers = $.extend({}, options.headers);
             if (options.contentRange) {
                 options.headers['Content-Range'] = options.contentRange;
             }
@@ -1121,9 +1121,8 @@
                         data.files.push(file);
                     }
                 });
-                if (this._trigger('paste', e, data) === false ||
-                        this._onAdd(e, data) === false) {
-                    return false;
+                if (this._trigger('paste', e, data) !== false) {
+                    this._onAdd(e, data);
                 }
             }
         },
@@ -1146,13 +1145,15 @@
 
         _onDragOver: function (e) {
             e.dataTransfer = e.originalEvent && e.originalEvent.dataTransfer;
-            var dataTransfer = e.dataTransfer;
-            if (dataTransfer) {
-                if (this._trigger('dragover', e) === false) {
-                    return false;
-                }
-                if ($.inArray('Files', dataTransfer.types) !== -1) {
-                    dataTransfer.dropEffect = 'copy';
+            var dataTransfer = e.dataTransfer,
+                data = {
+                    dropEffect: 'copy',
+                    preventDefault: true
+                };
+            if (dataTransfer && $.inArray('Files', dataTransfer.types) !== -1 &&
+                    this._trigger('dragover', e, data) !== false) {
+                dataTransfer.dropEffect = data.dropEffect;
+                if (data.preventDefault) {
                     e.preventDefault();
                 }
             }
