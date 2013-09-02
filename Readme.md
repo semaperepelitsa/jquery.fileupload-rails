@@ -41,6 +41,8 @@ If you downloaded jquery.ui assets into your project, delete them and use [jquer
 
 ## Changelog
 
+1.6.1. Core 5.32.5, jQuery UI Rails 4 compatibility.
+
 1.6.0. Core 5.32.2.
 
 1.5.1. Core 5.31.
