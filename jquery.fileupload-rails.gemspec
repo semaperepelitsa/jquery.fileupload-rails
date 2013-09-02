@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = "jquery.fileupload-rails"
-  s.version     = "1.6.0"
+  s.version     = "1.6.1"
   s.author      = "Semyon Perepelitsa"
   s.email       = "sema@sema.in"
   s.homepage    = "https://github.com/semaperepelitsa/jquery.fileupload-rails"
@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
   s.files       = File.read('Manifest.txt').split("\n")
 
   s.add_dependency 'railties', '>= 3.1'
-  s.add_dependency 'jquery-ui-rails', '~> 3.0'
+  s.add_dependency 'jquery-ui-rails', '>= 3.0', '< 5.0'
 end
