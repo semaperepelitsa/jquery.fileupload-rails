@@ -2,7 +2,7 @@
 //= require jquery.iframe-transport
 
 /*
- * jQuery File Upload Plugin 5.32.5
+ * jQuery File Upload Plugin 5.34.0
  * https://github.com/blueimp/jQuery-File-Upload
  *
  * Copyright 2010, Sebastian Tschan
@@ -177,6 +177,9 @@
             // handlers using jQuery's Deferred callbacks:
             // data.submit().done(func).fail(func).always(func);
             add: function (e, data) {
+                if (e.isDefaultPrevented()) {
+                    return false;
+                }
                 if (data.autoUpload || (data.autoUpload !== false &&
                         $(this).fileupload('option', 'autoUpload'))) {
                     data.process().done(function () {
@@ -363,10 +366,18 @@
                 // Trigger a custom progress event with a total data property set
                 // to the file size(s) of the current upload and a loaded data
                 // property calculated accordingly:
-                this._trigger('progress', e, data);
+                this._trigger(
+                    'progress',
+                    $.Event('progress', {delegatedEvent: e}),
+                    data
+                );
                 // Trigger a global progress event for all current file uploads,
                 // including ajax calls queued for sequential file uploads:
-                this._trigger('progressall', e, this._progress);
+                this._trigger(
+                    'progressall',
+                    $.Event('progressall', {delegatedEvent: e}),
+                    this._progress
+                );
             }
         },
 
@@ -537,8 +548,10 @@
                 options.url = options.form.prop('action') || location.href;
             }
             // The HTTP request method must be "POST" or "PUT":
-            options.type = (options.type || options.form.prop('method') || '')
-                .toUpperCase();
+            options.type = (options.type ||
+                ($.type(options.form.prop('method')) === 'string' &&
+                    options.form.prop('method')) || ''
+                ).toUpperCase();
             if (options.type !== 'POST' && options.type !== 'PUT' &&
                     options.type !== 'PATCH') {
                 options.type = 'POST';
@@ -611,8 +624,11 @@
             data.submit = function () {
                 if (this.state() !== 'pending') {
                     data.jqXHR = this.jqXHR =
-                        (that._trigger('submit', e, this) !== false) &&
-                        that._onSend(e, this);
+                        (that._trigger(
+                            'submit',
+                            $.Event('submit', {delegatedEvent: e}),
+                            this
+                        ) !== false) && that._onSend(e, this);
                 }
                 return this.jqXHR || that._getXHRPromise();
             };
@@ -832,7 +848,11 @@
                     // Set timer for bitrate progress calculation:
                     options._bitrateTimer = new that._BitrateTimer();
                     jqXHR = jqXHR || (
-                        ((aborted || that._trigger('send', e, options) === false) &&
+                        ((aborted || that._trigger(
+                            'send',
+                            $.Event('send', {delegatedEvent: e}),
+                            options
+                        ) === false) &&
                         that._getXHRPromise(false, options.context, aborted)) ||
                         that._chunkedUpload(options) || $.ajax(options)
                     ).done(function (result, textStatus, jqXHR) {
@@ -935,7 +955,11 @@
                 that._initResponseObject(newData);
                 that._initProgressObject(newData);
                 that._addConvenienceMethods(e, newData);
-                result = that._trigger('add', e, newData);
+                result = that._trigger(
+                    'add',
+                    $.Event('add', {delegatedEvent: e}),
+                    newData
+                );
                 return result;
             });
             return result;
@@ -1104,7 +1128,11 @@
                 if (that.options.replaceFileInput) {
                     that._replaceFileInput(data.fileInput);
                 }
-                if (that._trigger('change', e, data) !== false) {
+                if (that._trigger(
+                        'change',
+                        $.Event('change', {delegatedEvent: e}),
+                        data
+                    ) !== false) {
                     that._onAdd(e, data);
                 }
             });
@@ -1121,7 +1149,11 @@
                         data.files.push(file);
                     }
                 });
-                if (this._trigger('paste', e, data) !== false) {
+                if (this._trigger(
+                        'paste',
+                        $.Event('paste', {delegatedEvent: e}),
+                        data
+                    ) !== false) {
                     this._onAdd(e, data);
                 }
             }
@@ -1136,7 +1168,11 @@
                 e.preventDefault();
                 this._getDroppedFiles(dataTransfer).always(function (files) {
                     data.files = files;
-                    if (that._trigger('drop', e, data) !== false) {
+                    if (that._trigger(
+                            'drop',
+                            $.Event('drop', {delegatedEvent: e}),
+                            data
+                        ) !== false) {
                         that._onAdd(e, data);
                     }
                 });
@@ -1145,17 +1181,14 @@
 
         _onDragOver: function (e) {
             e.dataTransfer = e.originalEvent && e.originalEvent.dataTransfer;
-            var dataTransfer = e.dataTransfer,
-                data = {
-                    dropEffect: 'copy',
-                    preventDefault: true
-                };
+            var dataTransfer = e.dataTransfer;
             if (dataTransfer && $.inArray('Files', dataTransfer.types) !== -1 &&
-                    this._trigger('dragover', e, data) !== false) {
-                dataTransfer.dropEffect = data.dropEffect;
-                if (data.preventDefault) {
-                    e.preventDefault();
-                }
+                    this._trigger(
+                        'dragover',
+                        $.Event('dragover', {delegatedEvent: e})
+                    ) !== false) {
+                e.preventDefault();
+                dataTransfer.dropEffect = 'copy';
             }
         },
 
