@@ -5,6 +5,7 @@ Rakefile
 Readme.md
 demo/.gitignore
 demo/Gemfile
+demo/Rakefile
 demo/Readme.md
 demo/app/assets/javascripts/application.js.coffee
 demo/app/controllers/application_controller.rb
@@ -12,13 +13,15 @@ demo/app/views/application/basic.html.erb
 demo/app/views/application/create.html.erb
 demo/app/views/application/ui.html.erb
 demo/app/views/layouts/application.html.erb
+demo/bin/bundle
+demo/bin/rails
+demo/bin/rake
 demo/config.ru
 demo/config/application.rb
 demo/config/boot.rb
 demo/config/environment.rb
 demo/config/routes.rb
 demo/log/.gitkeep
-demo/script/rails
 dependencies.json
 jQuery-File-Upload
 jquery.fileupload-rails.gemspec
