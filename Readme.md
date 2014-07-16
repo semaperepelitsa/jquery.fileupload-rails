@@ -39,6 +39,8 @@ If you downloaded jquery.ui assets into your project, delete them and use [jquer
 
 ## Changelog
 
+1.9.0. Core 5.41.0.
+
 1.8.1. Core 5.40.1.
 
 1.8.0. Core 5.40.0, updated demo app.
