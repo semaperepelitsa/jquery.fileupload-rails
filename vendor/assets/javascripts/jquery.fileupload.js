@@ -1,4 +1,4 @@
-//= require jquery.ui.widget
+//= require jquery-ui/widget
 //= require jquery.iframe-transport
 
 /*
