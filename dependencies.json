@@ -1,4 +1,4 @@
 {
-  "jquery.fileupload": ["jquery.ui.widget", "jquery.iframe-transport"],
+  "jquery.fileupload": ["jquery-ui/widget", "jquery.iframe-transport"],
   "jquery.iframe-transport": []
 }
